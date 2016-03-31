@@ -45,7 +45,11 @@ public class Main {
 				length = l;
 			}
 			return; // end
-		}
+		}else {
+	            if (length < l) {
+	                return;
+	            }
+	        }
 		
 		matrix[r][c] = 0;
 
