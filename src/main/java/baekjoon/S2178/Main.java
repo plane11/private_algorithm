@@ -1,15 +1,14 @@
 package baekjoon.S2178;
 
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Scanner;
 
-// time over
 public class Main {
 
 	static int row;
 	static int col;
 	static int[][] matrix;
-
-	static int length;
 
 	public static void main(String[] args) {
 		Scanner sc = new Scanner(System.in);
@@ -18,58 +17,64 @@ public class Main {
 
 		matrix = new int[row][col];
 
-		length = row * col; // init with maximum length
-
 		sc.nextLine();
 
 		for (int i = 0; i < row; i++) {
 			String line = sc.nextLine();
 			for (int j = 0; j < col; j++) {
-				matrix[i][j] = line.charAt(j) == '0' ? 0 : 1;
+				matrix[i][j] = Integer.parseInt(line.charAt(j) + "");// == '0' ? 0 : 1;
 			}
 		}
 
-		dfs(0, 0, 0);
-
-		System.out.println(length);
+		bfs(0, 0, 1);
 	}
 
-	private static void dfs(int r, int c, int l) {
-		l++;
-//		System.out.println("visit(" + r + ", " + c + ")");
+	private static void bfs(int r, int c, int l) {
+		Queue<Node> queue = new LinkedList<Node>();
+		queue.add(new Node(r, c, l));
 
-		if (r + 1 == row && c + 1 == col) {
-			// 도착점 도착
-			// System.out.println("Dest > " + l);
-			if (length > l) {
-				length = l;
+		while (!queue.isEmpty()) {
+			Node node = queue.poll();
+
+			if (node.row + 1 == row && node.col + 1 == col) {
+				System.out.println(node.length);
+				break; // end
 			}
-			return; // end
-		}
-		
-		matrix[r][c] = 0;
+			
+			matrix[node.row][node.col] = 0;
+			
+			// 우로이동
+			if (node.col + 1 < col && matrix[node.row][node.col + 1] == 1) {
+				queue.add(new Node(node.row, node.col + 1, node.length + 1));
+			}
 
-		// 우로이동
-		if (c + 1 < col && matrix[r][c + 1] == 1) {
-			dfs(r, c + 1, l);
-		}
+			// 아래로이동
+			if (node.row + 1 < row && matrix[node.row + 1][node.col] == 1) {
+				queue.add(new Node(node.row + 1, node.col, node.length + 1));
+			}
 
-		// 아래로이동
-		if (r + 1 < row  && matrix[r + 1][c] == 1) {
-			dfs(r + 1, c, l);
-		}
+			// 위로이동
+			if (node.row - 1 >= 0 && matrix[node.row - 1][node.col] == 1) {
+				queue.add(new Node(node.row - 1, node.col, node.length + 1));
+			}
 
-		// 위로이동
-		if (r - 1 >= 0 && matrix[r - 1][c] == 1) {
-			dfs(r - 1, c, l);
-		}
+			// 좌로이동
+			if (node.col - 1 >= 0 && matrix[node.row][node.col - 1] == 1) {
+				queue.add(new Node(node.row, node.col - 1, node.length + 1));
+			}
 
-		// 좌로이동
-		if (c - 1 >= 0 && matrix[r][c - 1] == 1) {
-			dfs(r, c - 1, l);
 		}
-		
-		matrix[r][c] = 1;
+	}
+}
 
+class Node {
+	int row;
+	int col;
+	int length;
+
+	public Node(int row, int col, int length) {
+		this.row = row;
+		this.col = col;
+		this.length = length;
 	}
 }
