@@ -1,3 +1,6 @@
+package baekjoon.S2193;
+
+
 import java.util.Scanner;
  
 /**
