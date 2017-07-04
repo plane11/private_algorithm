@@ -1,4 +1,4 @@
-package day2;
+package koitp.day2;
 
 import java.io.BufferedReader;
 import java.io.File;
