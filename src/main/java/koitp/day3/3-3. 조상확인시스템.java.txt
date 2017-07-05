@@ -1,0 +1,41 @@
+import java.io.*;
+import java.util.*;
+
+public class source {
+	static int N, R, Q, K;
+	static ArrayList<Integer>[] list;
+	static int[] num, end;
+	
+	static void dfs(int n) {
+		num[n] = ++K;
+		for (int t: list[n]){
+			dfs(t);
+		}
+		end[n] = K;
+	}
+	
+	public static void main(String[] args) throws Exception {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		StringTokenizer st = new StringTokenizer(br.readLine());
+		N = Integer.parseInt(st.nextToken());
+		R = Integer.parseInt(st.nextToken());
+		Q = Integer.parseInt(st.nextToken());
+		
+		list = new ArrayList[N+1];
+		for (int i=1;i<=N;i++)
+			list[i] = new ArrayList<>();
+		
+		st = new StringTokenizer(br.readLine());
+		for (int i=1;i<=N;i++){
+			int p = Integer.parseInt(st.nextToken());
+			if (p != i) list[p].add(i);
+		}
+		
+		num = new int[N+1]; end = new int[N+1];
+		dfs(R);
+		
+		for (int i=1;i<=N;i++){
+			System.out.println(i + ": " + num[i] + " " + end[i]);
+		}
+	}
+}
