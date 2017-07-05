@@ -8,7 +8,6 @@ import java.util.StringTokenizer;
 
 public class NumberOfInversion {
 
-	// done
 	static int N;
 	static int[] D;
 
