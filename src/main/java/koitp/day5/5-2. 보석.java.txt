@@ -1,0 +1,53 @@
+import java.io.*;
+import java.util.*;
+
+class Jewel {
+	public Jewel(int w, int c) {
+		this.w = w;
+		this.c = c;
+	}
+
+	int w, c;
+}
+
+public class source {
+	static int N, K;
+	static Jewel[] A;
+	static int[] B;
+	
+	public static void main(String[] args) throws Exception {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		StringTokenizer st = new StringTokenizer(br.readLine());
+		N = Integer.parseInt(st.nextToken());
+		K = Integer.parseInt(st.nextToken());
+		A = new Jewel[N+1];
+		for (int i=1;i<=N;i++){
+			st = new StringTokenizer(br.readLine());
+			int w = Integer.parseInt(st.nextToken());
+			int c = Integer.parseInt(st.nextToken());
+			A[i] = new Jewel(w, c);
+		}
+		B = new int[K+1];
+		for (int i=1;i<=K;i++)
+			B[i] = Integer.parseInt(br.readLine());
+		Arrays.sort(A, 1, N+1, new Comparator<Jewel>() {
+			public int compare(Jewel a, Jewel b) {
+				// a < b --> negative
+				// a > b --> positive
+				// a = b --> zero
+				return a.w - b.w;
+			}
+		});
+		Arrays.sort(B, 1, K+1);
+		PriorityQueue<Integer> heap = new PriorityQueue<>();
+		long ans = 0;
+		for (int i=1,j=1;i<=K;i++){
+			while (j <= N && A[j].w <= B[i]){
+				heap.add(-A[j].c);
+				j++;
+			}
+			if (!heap.isEmpty()) ans += -heap.poll();
+		}
+		System.out.println(ans);
+	}
+}
