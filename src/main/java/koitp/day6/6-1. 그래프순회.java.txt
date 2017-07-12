@@ -1,0 +1,48 @@
+import java.io.*;
+import java.util.*;
+
+public class source {
+	static int V, E, S;
+	static ArrayList<Integer>[] con;
+	
+	static boolean[] vis;
+	static void dfs(int n) {
+		System.out.print(n + " ");
+		vis[n] = true;
+		for (int t: con[n]) if (!vis[t])
+			dfs(t);
+	}
+	
+	public static void main(String[] args) throws Exception {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		StringTokenizer st = new StringTokenizer(br.readLine());
+		V = Integer.parseInt(st.nextToken());
+		E = Integer.parseInt(st.nextToken());
+		S = Integer.parseInt(st.nextToken());
+		con = new ArrayList[V+1];
+		for (int i=1;i<=V;i++) con[i] = new ArrayList<>();
+		for (int i=1;i<=E;i++){
+			st = new StringTokenizer(br.readLine());
+			int a = Integer.parseInt(st.nextToken());
+			int b = Integer.parseInt(st.nextToken());
+			con[a].add(b); con[b].add(a);
+		}
+		for (int i=1;i<=V;i++)
+			Collections.sort(con[i]);
+		
+		vis = new boolean[V+1];
+		dfs(S); System.out.println();
+		
+		vis = new boolean[V+1];
+		Queue <Integer> que = new LinkedList<>();
+		vis[S] = true; que.add(S);
+		while (!que.isEmpty()){
+			int q = que.poll();
+			System.out.print(q + " ");
+			for (int t: con[q]) if (!vis[t]){
+				que.add(t); vis[t] = true;
+			}
+		}
+		System.out.println();
+	}
+}
