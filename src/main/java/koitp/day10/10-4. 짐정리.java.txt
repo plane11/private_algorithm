@@ -1,0 +1,55 @@
+import java.io.*;
+import java.util.*;
+
+class Info {
+	public Info(int val, int pos) {
+		this.val = val;
+		this.pos = pos;
+	}
+
+	int val, pos;
+}
+
+public class source {
+	static int N;
+	static Info[] A;
+	static int[] to;
+	static boolean[] vis;
+	
+    public static void main(String[] args) throws Exception{
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        N = Integer.parseInt(br.readLine());
+        A = new Info[N+1];
+        for (int i=1;i<=N;i++){
+        	int v = Integer.parseInt(br.readLine());
+        	A[i] = new Info(v, i);
+        }
+        Arrays.sort(A, 1, N+1, new Comparator<Info>() {
+        	public int compare(Info a, Info b) {
+        		return a.val-b.val;
+        	}
+		});
+        // A[i].pos : i¹ø Ä­¿¡ ¿Í¾ßÇÏ´Â Ä­ ¹øÈ£?
+        to = new int[N+1];
+        for (int i=1;i<=N;i++) to[A[i].pos] = i;
+        
+        int all_min = A[1].val, ans = 0;
+
+        vis = new boolean[N+1];
+        for (int i=1;i<=N;i++) if (!vis[i]){
+        	int size = 0, mn = Integer.MAX_VALUE, sum = 0;
+        	for (int j=i;!vis[j];j=to[j]){
+        		vis[j] = true;
+        		size++;
+        		mn = Math.min(mn, A[j].val);
+        		sum += A[j].val;
+        	}
+        	
+        	// size, mn, sum
+        	int val1 = sum + mn * (size - 2);
+        	int val2 = sum + mn + all_min * (size + 1);
+        	ans += Math.min(val1, val2);
+        }
+        System.out.println(ans);
+    }
+}
