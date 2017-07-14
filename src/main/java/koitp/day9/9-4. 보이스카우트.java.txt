@@ -1,0 +1,76 @@
+import java.io.*;
+import java.util.*;
+      
+class Point {
+	public Point(int x, int y) {
+		this.x = x;
+		this.y = y;
+	}
+
+	int x, y;
+}
+
+public class source {
+	static int N;
+	static Point[] A, B;
+	static int[][] D;
+	
+	static int ccw(int ax, int ay, int bx, int by, int cx, int cy) {
+		long k = (long)(bx-ax)*(cy-ay) - (long)(cx-ax)*(by-ay);
+		if (k > 0) return 1;
+		if (k < 0) return -1;
+		return 0;
+	}
+	
+	static int ccw(Point a, Point b, Point c) {
+		return ccw(a.x, a.y, b.x, b.y, c.x, c.y);
+	}
+	
+	static int dp(final int pv) {
+		B = new Point[N+1];
+		for (int i=pv;i<=N;i++) B[i] = A[i];
+		// B[pv] 기준점
+		// B[pv+1 ~ N] 총 N-pv개의 점이 있다 (기준점 제외)
+		Arrays.sort(B, pv+1, N+1, new Comparator<Point>() {
+			public int compare(Point a, Point b) {
+				return -ccw(B[pv], a, b);
+			}
+		});
+		
+		D = new int[N+1][N+1];
+		for (int i=pv+1;i<=N;i++) D[pv][i] = 2;
+		for (int i=pv;i<N;i++) for (int j=i+1;j<N;j++){
+			for (int k=j+1;k<=N;k++) if (ccw(B[i], B[j], B[k]) > 0){
+				D[j][k] = Math.max(D[j][k], D[i][j]+1);
+			}
+		}
+		
+		int ret = 0;
+		for (int i=pv;i<N;i++) for (int j=i+1;j<=N;j++)
+			ret = Math.max(ret, D[i][j]);
+		return ret;
+	}
+	
+    public static void main(String[] args) throws Exception{
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        N = Integer.parseInt(br.readLine());
+        A = new Point[N+1];
+        for (int i=1;i<=N;i++){
+        	StringTokenizer st = new StringTokenizer(br.readLine());
+        	int x = (int)Math.round(Double.parseDouble(st.nextToken())*100);
+        	int y = (int)Math.round(Double.parseDouble(st.nextToken())*100);
+        	A[i] = new Point(x, y);
+        }
+
+        Arrays.sort(A, 1, N+1, new Comparator<Point>() {
+        	public int compare(Point a, Point b) {
+        		return a.y != b.y ? a.y-b.y : a.x-b.x;
+        	}
+		});
+        
+        int ans = 0;
+        for (int i=1;i<=N;i++)
+        	ans = Math.max(ans, dp(i));
+        System.out.println(ans);
+    }
+}
