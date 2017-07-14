@@ -1,0 +1,67 @@
+import java.io.*;
+import java.util.*;
+
+class Point {
+	public Point(int x, int y) {
+		this.x = x;
+		this.y = y;
+	}
+
+	int x, y;
+}
+
+public class source {
+	static int N;
+	static Point[] A, B;
+	
+	static int func(int s, int e) {
+		// A[s~e] x좌표 기준 정렬됐다고 가정
+		if (e-s+1 < 7){
+			// Terminal condition
+			
+			// O(n^2) 방법으로 거리 계산
+			Arrays.sort(A, s, e+1, new Comparator<Point>() {
+				public int compare(Point a, Point b) {
+					return a.y - b.y;
+				}
+			});
+			return ~~~~; // 거리값 리턴
+		}
+		int m = (s+e)/2;
+		int dl = func(s, m), dr = func(m+1, e);
+		// A[s~m] y좌표 정렬, A[m+1~e] y좌표 정렬 됐다!!
+		int d = Math.min(dl, dr);
+		
+		/*
+		 * 정복 과정 코드
+		 */
+		
+		// Merge를 해줘야 위의 가정이 유효하다
+		for (int l=s,r=m+1,t=s;t<=e;t++){
+			if (r > e || l <= m && A[l].y <= A[r].y)
+				B[t] = A[l++];
+			else
+				B[t] = A[r++];
+		}
+		for (int i=s;i<=e;i++) A[i] = B[i];
+	}
+	
+	public static void main(String[] args) throws Exception {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		N = Integer.parseInt(br.readLine());
+		A = new Point[N+1];
+		for (int i=1;i<=N;i++){
+			StringTokenizer st = new StringTokenizer(br.readLine());
+			int x = Integer.parseInt(st.nextToken());
+			int y = Integer.parseInt(st.nextToken());
+			A[i] = new Point(x, y);
+		}
+		Arrays.sort(A, 1, N+1, new Comparator<Point>() {
+			public int compare(Point a, Point b) {
+				return a.x - b.x;
+			}
+		});
+		B = new Point[N+1];
+		func(1, N);
+	}
+}

@@ -1,0 +1,71 @@
+import java.io.*;
+import java.util.*;
+
+/*
+Set::=
+Set          ::= "{" Elementlist "}"
+Elementlist  ::= < empty > | List
+List         ::= Element | Element "," List
+Element      ::= Atom | Set
+Atom         ::= "{" | "}" | ","
+ */
+
+public class source {
+	static int T, N;
+	static char[] A;
+	
+	static boolean[][] set_visit, set_result;
+	
+	static boolean is_set(int s, int e) {
+		if (set_visit[s][e]) return set_result[s][e];
+		
+		set_visit[s][e] = true;
+		boolean res = false;
+		// A[s~e] 부분문자열이 set이냐?
+		if (A[s] == '{' && A[e] == '}' && is_elementlist(s+1, e-1))
+			res = true;
+		set_result[s][e] = res;
+		return res;
+	}
+	
+	static boolean is_elementlist(int s, int e) {
+		if (s > e || is_list(s, e)) return true;
+		return false;
+	}
+	
+	static boolean is_list(int s, int e) {
+		if (is_element(s, e)) return true;
+		for (int i=s;i<=e;i++) if (A[i] == ','
+				&& is_element(s, i-1)
+				&& is_list(i+1, e))
+			return true;
+		return false;
+	}
+	
+	static boolean is_element(int s, int e) {
+		if (is_atom(s, e) || is_set(s, e)) return true;
+		return false;
+	}
+	
+	static boolean is_atom(int s, int e) {
+		if (s != e) return false;
+		if (A[s] == '{' || A[s] == '}' || A[s] == ',') return true;
+		return false;
+	}
+	
+	public static void main(String[] args) throws Exception {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		T = Integer.parseInt(br.readLine());
+		for (int ts=1;ts<=T;ts++){
+			String buf = br.readLine();
+			N = buf.length(); A = new char[N+2];
+			for (int i=1;i<=N;i++) A[i] = buf.charAt(i-1);
+			
+			set_visit = new boolean[N+1][N+1];
+			set_result = new boolean[N+1][N+1];
+			
+			System.out.printf("Word #%d: %s\n",
+					ts, is_set(1, N) ? "Set" : "No Set");
+		}
+	}
+}
