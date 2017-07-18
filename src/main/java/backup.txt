@@ -1,0 +1,102 @@
+package com.sds.saas.admin.portal.config;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.*;
+
+public class Solution {
+
+    static int N;
+    static int[] parent;
+    static boolean[] visit;
+    static int[][] matrix;
+    static List<Integer>[] D;
+
+    static int MAX_COIN = 15;
+
+    public static void main(String[] args) throws Exception {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+        int T = Integer.parseInt(br.readLine());
+        for (int t = 1; t <= T; t++) {
+            N = Integer.parseInt(br.readLine());
+
+            matrix = new int[N][MAX_COIN + 1];
+            parent = new int[N];
+            visit = new boolean[N];
+            D = new ArrayList[N];
+
+            for (int n = 0; n < N; n++) {
+                D[n] = new ArrayList<>();
+            }
+
+            int root = -1;
+            StringTokenizer token = new StringTokenizer(br.readLine());
+            for (int n = 0; n < N; n++) {
+                int num = Integer.parseInt(token.nextToken());
+                parent[n] = num;
+                visit[n] = false;
+
+                if (num > -1) {
+                    D[num].add(n);
+                } else {
+                    root = n;
+                }
+            }
+
+            Queue<Integer> queue = new LinkedList<>();
+            for (int n = 0; n < N; n++) {
+                if (D[n].size() == 0) { // leaf
+                    for (int i = 1; i <= MAX_COIN; i++) {
+                        matrix[n][i] = i;
+                    }
+
+                    if (!visit[n]) {
+                        queue.add(n);
+                        visit[n] = true;
+                    }
+                }
+            }
+
+            while (!queue.isEmpty()) {
+                int num = queue.poll(); // parent값
+
+                for (int n = 0; n < N; n++) {
+                    int minSum = 0;
+
+                    for (int i = 1; i <= D[num].size(); i++) {
+                        // 내 자식값들 중에 내가 사용할 값과 다른 값을 사용한 것 중 최소
+                        minSum += getMinValue(D[num].get(i-1), n);
+                    }
+                    matrix[num][n] = minSum;
+                }
+
+                if(num == root) {
+                    break;
+                }
+                int p = parent[num];
+                if (!visit[p]) {
+                    queue.add(p);
+                    visit[p] = true;
+                }
+            }
+
+            int ans = Integer.MAX_VALUE;
+            for(int n = 0; n<N; n++) {
+                ans = Math.min(ans, matrix[root][n]);
+            }
+
+            System.out.println(ans);
+        }
+    }
+
+    private static int getMinValue(int child, int exceptValue) {
+        int min = Integer.MAX_VALUE;
+        for (int n = 0; n < N; n++) {
+            if (n != exceptValue) {
+                min = Math.min(min, matrix[child][n]);
+            }
+        }
+        return min;
+    }
+}
